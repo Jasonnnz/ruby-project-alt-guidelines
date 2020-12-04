@@ -5,9 +5,5 @@ class Order < ActiveRecord::Base
     has_many :products, through: :product_orders
     
 
-    def total_price 
-        self.products.sum(:price)
-    end 
-
 
 end 

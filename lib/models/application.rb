@@ -44,8 +44,7 @@ class Application
              ┬   ╔═╗╦  ╦╔═╗╦═╗╦ ╦╔╦╗╦ ╦╦╔╗╔╔═╗  ╔═╗╦╔╗╔╔═╗
             ┌┼─  ║╣ ╚╗╔╝║╣ ╠╦╝╚╦╝ ║ ╠═╣║║║║║ ╦  ╠╣ ║║║║║╣ 
             └┘   ╚═╝ ╚╝ ╚═╝╩╚═ ╩  ╩ ╩ ╩╩╝╚╝╚═╝  ╚  ╩╝╚╝╚═╝ 
-                                                                                                                                                     
-                                                                                                                                                                                                                                                                             
+                                                                                                                                                                                                                                                                                                                                                                                                                          
       """
         puts shef2
     end
@@ -66,8 +65,40 @@ class Application
         User.login_a_user
     end
 
+    def checkout_helper
+        user.check_out_cart
+        main_menu
+    end
+
     def cart_helper
         user.display_cart
+        @@prompt.select("Would you like to checkout?") do |menu|
+            menu.choice "Check out", -> {checkout_helper}
+            menu.choice "Go back to main menu", -> {main_menu}
+        end
+    end
+
+    def past_orders_helper
+        past_orders = user.past_orders
+        choices = Hash[past_orders.map {|order| [order.updated_at, order]}]
+        @past_order = @@prompt.select("Which past order would you like to view?", choices)
+        choices = Hash[past_orders.map {|order| [order.updated_at, past_cart]}]
+    end
+
+    def past_cart
+        names = @past_order.product_orders.map {|product_order| "#{product_order.product.name} with Quantity of #{product_order.quantity}"}
+        puts "#{names}"
+        @@prompt.select("What would you like to do?") do |menu| 
+            menu.choice "Order again", -> {order_again_helper}
+            menu.choice "Go back to main menu", -> {main_menu}
+        end
+    end
+
+    def order_again_helper
+        new_order_product = @past_order.product_orders.map {|product_order| product_order}
+        new_order_product.each do |product_order|
+            user.add_to_cart(product_order.product, product_order.quantity)
+        end 
         main_menu
     end
 
@@ -110,27 +141,79 @@ class Application
     end
 
     def show_reviews 
-        puts @review_choice.reviews.map {|review| "#{review.description} with a rating of #{review.rating}/5!" if review.user == user}.compact
+        puts @review_choice.reviews.map {|review| "Review id #{review.id}: #{review.description} with a rating of #{review.rating}/5!" if review.user == user}.compact
         @@prompt.select("Would you like to delete any reviews or go back?") do |menu|
-            menu.choice "Delete a review", -> {puts "1"}
+            menu.choice "Delete a review", -> {delete_review}
             menu.choice "Go Back to Main Menu", -> {main_menu}
         end
     end 
 
+    def select_review_id_to_del
+        puts "Please input the id number of the review you'd like to delete!"
+        @id_number = gets.chomp 
+    end 
+
+    def delete_review
+        select_review_id_to_del
+        user.delete_review_by_id(@id_number)
+        main_menu
+    end
+
     def item_options
         @@prompt.select("What would you like to do?") do |menu|
             menu.choice "Add a review", -> {add_review}
-            menu.choice "Add to cart?", -> {add_to_cart} 
+            menu.choice "Add to cart", -> {add_to_cart_helper} 
             menu.choice "View all reviews", -> {reviews_for_product}
+            menu.choice "Go back to main menu", -> {main_menu}
         end
     end     
 
+    def add_to_cart_helper 
+        puts "Quantity?"
+        quantity = gets.chomp
+        user.add_to_cart($selection, quantity)
+        main_menu
+    end
+
+    def delete_from_cart_helper
+        #2 options, delete or update. If delete they input an id to delete. if update they input id and new quantity, 2 chomps
+        puts "Which Product Order would you like to delete? Please input the Product Order ID number."
+        product_order_id = gets.chomp 
+        user.delete_product_order_by_id(product_order_id)
+        main_menu
+    end
+
+    def update_quantity_helper 
+        puts "Which Product Order would you like to update? Please input the ID number"
+        product_order_id = gets.chomp
+        puts "What is the new quantity of the product you would like?"
+        new_quantity = gets.chomp 
+        user.update_quantity(product_order_id, new_quantity)
+        main_menu
+    end
+    
+    def empty_cart
+        user.current_cart.destroy
+        main_menu
+    end
+
+    def update_cart_helper
+        @@prompt.select("Would you like to delete an item entirely or update cart?") do |menu|
+            menu.choice "Delete a product", -> {delete_from_cart_helper}
+            menu.choice "Update cart", -> {update_quantity_helper}
+            menu.choice "Empty cart", -> {empty_cart}
+            menu.choice "Go to main menu",  -> {main_menu}
+        end
+    end
+    
     def main_menu
         @@prompt.select("Welcome, #{user.username}! 🥳 What would you like to do?".blue.on_white.bold) do |menu|
             menu.choice "View Cart".red, -> {cart_helper} 
-            menu.choice "View Past Orders".red, -> {puts "2"}
+            menu.choice "Update Cart".red, -> {update_cart_helper}
+            menu.choice "View Past Orders".red, -> {past_orders_helper}
             menu.choice "View My Reviews".red, -> {my_reviews}
             menu.choice "View Products".red, -> {item_menu} 
+            menu.choice "Log Out".red, -> {log_out}
         end
     end
 
@@ -141,6 +224,11 @@ class Application
             menu.choice "Go Back", -> {main_menu}
         end
     end 
+
+    def log_out
+        puts "Thanks for checking out our app! Please like comment and subscribe"
+        exit 
+    end
 
 end 
 

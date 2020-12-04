@@ -15,22 +15,22 @@ seafood = Pairing.create(name: "Seafood")
 
 #Create Products#
 #HERBS
-rosemary = Product.create(name: "Rosemary".green, price: 475, description: "Like pine, faintly lemony.", pairing_id: beef.id)
-basil = Product.create(name: "Basil".green, price: 500, description: "Minty and slightly peppery, with a touch of sweetness.", pairing_id: vegetables.id)
-cilantro = Product.create(name: "Cilantro".green, price: 375, description:"Bright, and citrusy. Some say it can taste a little soapy.", pairing_id: seafood.id)
-parsley = Product.create(name: "Parsley".green, price: 345, description: "Grassy, mild, slightly peppery.", pairing_id: poultry.id)
-dill = Product.create(name: "Dill".green, price: 450, description: "Sweet, grassy.", pairing_id: seafood.id)
-thyme = Product.create(name: "Thyme".green, price: 475, description: "Lemony, slightly peppery and minty.".blue, pairing_id: beef.id)
-oregano = Product.create(name: "Oregano".green, price: 300, description: "Lemony, minty, peppery.", pairing_id: pork.id)
+rosemary = Product.create(name: "Rosemary", price: 475, description: "Like pine, faintly lemony.", pairing_id: beef.id)
+basil = Product.create(name: "Basil", price: 500, description: "Minty and slightly peppery, with a touch of sweetness.", pairing_id: vegetables.id)
+cilantro = Product.create(name: "Cilantro", price: 375, description:"Bright, and citrusy. Some say it can taste a little soapy.", pairing_id: seafood.id)
+parsley = Product.create(name: "Parsley", price: 345, description: "Grassy, mild, slightly peppery.", pairing_id: poultry.id)
+dill = Product.create(name: "Dill", price: 450, description: "Sweet, grassy.", pairing_id: seafood.id)
+thyme = Product.create(name: "Thyme", price: 475, description: "Lemony, slightly peppery and minty.".blue, pairing_id: beef.id)
+oregano = Product.create(name: "Oregano", price: 300, description: "Lemony, minty, peppery.", pairing_id: pork.id)
 
 #SPICES
-cumin = Product.create(name: "Cumin".yellow, price: 325, description: "Its natural oils to add rich, earthiness.", pairing_id: vegetables.id)
-mustard_seed = Product.create(name: "Mustard Seed".yellow, price: 400, description: "Zippy, hot Flavor.", pairing_id: beef.id)
-red_pepper = Product.create(name: "Red Pepper Flakes".yellow, price: 275, description:"Earthy, savory. Spice flavor.", pairing_id: seafood.id)
-smoked_paprika = Product.create(name: "Smoked Paprika".yellow, price: 400, description: "Rich, sweet & smokey", pairing_id: poultry.id)
-bay_leaves = Product.create(name: "Bay Leaves".yellow, price: 325, description: "Mysterious umami flavor.", pairing_id: beef.id)
-black_pepper = Product.create(name: "Black Pepper".yellow, price: 200, description: "Savory mild spice.", pairing_id: pork.id)
-turmeric = Product.create(name: "Turmeric".yellow, price: 245, description: "Bright, Floral & mild taste.", pairing_id: poultry.id)
+cumin = Product.create(name: "Cumin", price: 325, description: "Its natural oils to add rich, earthiness.", pairing_id: vegetables.id)
+mustard_seed = Product.create(name: "Mustard Seed", price: 400, description: "Zippy, hot Flavor.", pairing_id: beef.id)
+red_pepper = Product.create(name: "Red Pepper Flakes", price: 275, description:"Earthy, savory. Spice flavor.", pairing_id: seafood.id)
+smoked_paprika = Product.create(name: "Smoked Paprika", price: 400, description: "Rich, sweet & smokey", pairing_id: poultry.id)
+bay_leaves = Product.create(name: "Bay Leaves", price: 325, description: "Mysterious umami flavor.", pairing_id: beef.id)
+black_pepper = Product.create(name: "Black Pepper", price: 200, description: "Savory mild spice.", pairing_id: pork.id)
+turmeric = Product.create(name: "Turmeric", price: 245, description: "Bright, Floral & mild taste.", pairing_id: poultry.id)
 
 #Create Reviews#
 r1 = Review.create(rating: 4, description: "The best with Steak!", product_id: rosemary.id, user_id: u1.id)

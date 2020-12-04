@@ -41,13 +41,16 @@ class User < ActiveRecord::Base
     end
 
     def display_cart
-        count = 0
+        
         self.current_cart.product_orders.each do |product_order|
-            puts "#{count + 1}) #{product_order.product.name} Quantity: #{product_order.quantity}"
-            count += 1
+            puts "Product Order ID: #{product_order.id}) #{product_order.product.name} Quantity: #{product_order.quantity}"
         end
+        @total_price = self.current_cart.product_orders.sum do |product_order|
+            (product_order.quantity * product_order.product.price) 
+        end
+        puts "Your total is: #{sprintf("$%2.2f",(@total_price.to_d/100))}"
     end
-
+        
     def self.all_product_names
         all_names = Product.all.map {|product| product.name}
         all_names
@@ -57,9 +60,17 @@ class User < ActiveRecord::Base
         Product.all
     end
 
-    def add_to_cart(product_instance)
-        self.current_cart
-        ProductOrder.create(order: self.current_cart, product: product_instance)
+    def update_quantity(product_order_id, new_quantity) #current_cart -> Order Instance
+        product_order = self.current_cart.product_orders.find(product_order_id)
+        product_order.update(quantity: new_quantity)
+    end
+
+    def delete_product_order_by_id(product_order_id_num)
+        self.current_cart.product_orders.find(product_order_id_num).destroy
+    end
+
+    def add_to_cart(product_instance, quantity)
+        ProductOrder.create(order: self.current_cart, product: product_instance, quantity: quantity)
     end
 
     def add_review
@@ -73,7 +84,7 @@ class User < ActiveRecord::Base
     def see_my_review_instances
         self.reviews
     end 
-
+    
     def my_reviewed_products
         all_reviews = see_my_review_instances.map {|review| review.product}
     end
@@ -88,6 +99,10 @@ class User < ActiveRecord::Base
     def self.categories #Array of Pairing instances
         Pairing.all
     end
-
-
+    
+    def check_out_cart
+        self.display_cart
+        self.current_cart.update(checked_out: true)
+        puts "Thanks for the ez money"
+    end
 end
