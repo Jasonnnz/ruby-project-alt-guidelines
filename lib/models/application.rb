@@ -68,6 +68,7 @@ class Application
 
     def cart_helper
         user.display_cart
+        main_menu
     end
 
     def view_all_products
@@ -101,6 +102,21 @@ class Application
         main_menu
     end
 
+    def my_reviews
+        arr_of_products = user.my_reviewed_products
+        choices = Hash[arr_of_products.map {|product| [product.name, product]}]
+        @review_choice = @@prompt.select("Which product's review would you like to look at?", choices)
+        show_reviews
+    end
+
+    def show_reviews 
+        puts @review_choice.reviews.map {|review| "#{review.description} with a rating of #{review.rating}/5!" if review.user == user}.compact
+        @@prompt.select("Would you like to delete any reviews or go back?") do |menu|
+            menu.choice "Delete a review", -> {puts "1"}
+            menu.choice "Go Back to Main Menu", -> {main_menu}
+        end
+    end 
+
     def item_options
         @@prompt.select("What would you like to do?") do |menu|
             menu.choice "Add a review", -> {add_review}
@@ -113,7 +129,7 @@ class Application
         @@prompt.select("Welcome, #{user.username}! 🥳 What would you like to do?".blue.on_white.bold) do |menu|
             menu.choice "View Cart".red, -> {cart_helper} 
             menu.choice "View Past Orders".red, -> {puts "2"}
-            menu.choice "View My Reviews".red, -> {puts "3"}
+            menu.choice "View My Reviews".red, -> {my_reviews}
             menu.choice "View Products".red, -> {item_menu} 
         end
     end

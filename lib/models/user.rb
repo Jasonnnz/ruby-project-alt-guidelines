@@ -5,11 +5,8 @@ class User < ActiveRecord::Base
     has_many :products, through: :reviews 
     has_many :product_orders, through: :orders
 
-
     @@prompt = TTY::Prompt.new
     @@sym = @@prompt.decorate('🤫')
-
-    
 
     def self.login_a_user
         puts "Please enter your username"
@@ -73,9 +70,13 @@ class User < ActiveRecord::Base
         new_review = Review.create(rating: rating, description: review, product_id: $selection.id, user_id: self.id)
     end
     
-    def see_all_my_reviews
-        self.reviews 
+    def see_my_review_instances
+        self.reviews
     end 
+
+    def my_reviewed_products
+        all_reviews = see_my_review_instances.map {|review| review.product}
+    end
 
     def reviews_for_product
         # $selection = product instance we chose
