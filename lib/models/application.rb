@@ -184,7 +184,7 @@ class Application
     end
 
     def delete_from_cart_helper
-        #2 options, delete or update. If delete they input an id to delete. if update they input id and new quantity, 2 chomps
+        
         puts "Which Product Order would you like to delete? Please input the Product Order ID number."
         product_order_id = gets.chomp 
         user.delete_product_order_by_id(product_order_id)
@@ -215,6 +215,7 @@ class Application
     end
     
     def main_menu
+        user.reload
         @@prompt.select("Welcome, #{user.username}! 🥳 What would you like to do?".blue.on_white.bold) do |menu|
             menu.choice "View Cart".red, -> {cart_helper} 
             menu.choice "Update Cart".red, -> {update_cart_helper}
