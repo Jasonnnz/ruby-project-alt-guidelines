@@ -23,17 +23,20 @@ class User < ActiveRecord::Base
     def self.register_a_user
         username = @@prompt.ask("Please enter a username")
         password = @@prompt.mask("Please enter a password", mask: @@sym)
+        name = @@prompt.ask("Please enter your name")
         user = User.find_by(username: username)
         if user 
-            puts "Sorry that username already exists"
+            message = "Sorry that username already exists"
         else
-            User.create(username: username, password: password)
+            User.create(username: username, password: password, name: name)
         end
 
     end
 
     def past_orders
-        self.orders.where(checked_out: true)
+        past_order = self.orders.where(checked_out: true)
+        if past_order.nil?
+        end 
     end
 
     def current_cart
@@ -87,6 +90,8 @@ class User < ActiveRecord::Base
     
     def my_reviewed_products
         all_reviews = see_my_review_instances.map {|review| review.product}
+        if all_reviews.nil?
+        end
     end
 
     def reviews_for_product

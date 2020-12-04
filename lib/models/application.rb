@@ -80,6 +80,10 @@ class Application
 
     def past_orders_helper
         past_orders = user.past_orders
+        if past_orders.nil?
+           puts "There are no past orders. Would you like to hear about our loyalty rewards program?"
+           main_menu
+        end 
         choices = Hash[past_orders.map {|order| [order.updated_at, order]}]
         @past_order = @@prompt.select("Which past order would you like to view?", choices)
         choices = Hash[past_orders.map {|order| [order.updated_at, past_cart]}]
@@ -135,6 +139,10 @@ class Application
 
     def my_reviews
         arr_of_products = user.my_reviewed_products
+        if arr_of_products.nil?
+            puts "You haven't written a review."
+            main_menu
+        end
         choices = Hash[arr_of_products.map {|product| [product.name, product]}]
         @review_choice = @@prompt.select("Which product's review would you like to look at?", choices)
         show_reviews
