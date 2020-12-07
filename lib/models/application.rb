@@ -17,7 +17,7 @@ class Application
     ░      ░     ░   ▒    ▒ ░   ░   ░ ░    ░      ░      ░      ░   ░ ░  ░░░ ░ ░    
            ░         ░  ░ ░           ░           ░      ░  ░         ░    ░    
     """            
-      shef2 = """
+      shef_logo = """
                                                                                                
                    ___                  .-.                    ./#&@@@@@@@@%’*  
                   (   )                /   `.         ,@@@@@@/‘            @@
@@ -40,15 +40,10 @@ class Application
             ┌┼─  ║╣ ╚╗╔╝║╣ ╠╦╝╚╦╝ ║ ╠═╣║║║║║ ╦  ╠╣ ║║║║║╣ 
             └┘   ╚═╝ ╚╝ ╚═╝╩╚═ ╩  ╩ ╩ ╩╩╝╚╝╚═╝  ╚  ╩╝╚╝╚═╝                                                                                                                                                                                                                                                                                                                                                                                                                    
       """
-        puts shef2.green
+        puts shef_logo.green
     end
     
-    def login_or_register
-        @@prompt.select("Would you like to register or login?".blue, symbols: { marker: "🍑"}) do |menu|
-            menu.choice "Register", -> {register}
-            menu.choice "Login", -> {login}
-        end
-    end
+    #LOGIN AND REGISTER HELPER METHODS#
 
     def register
         User.register_a_user
@@ -58,11 +53,20 @@ class Application
         User.login_a_user
     end
 
+    def login_or_register
+        @@prompt.select("Would you like to register or login?".blue, symbols: { marker: "🍑"}) do |menu|
+            menu.choice "Register", -> {register}
+            menu.choice "Login", -> {login}
+        end
+    end
+    
+    #CART METHODS AND HELPER METHODS# 
+    
     def checkout_helper
         user.check_out_cart
         main_menu
     end
-
+    
     def cart_helper
         if user.current_cart.product_orders.count == 0
             puts "You don't have any products in your cart currently😡"
@@ -75,18 +79,26 @@ class Application
             end
         end
     end
-
+    
     def past_orders_helper
         past_orders = user.past_orders
         if past_orders.count == 0
-           puts "There are no past orders. Would you like to hear about our loyalty rewards program?🤑"
-           main_menu
+            puts "There are no past orders. Would you like to hear about our loyalty rewards program?🤑"
+            main_menu
         end 
         choices = Hash[past_orders.map {|order| [order.updated_at, order]}]
         @past_order = @@prompt.select("Which past order would you like to view?".blue, choices, symbols: { marker: "📁"})
         choices = Hash[past_orders.map {|order| [order.updated_at, past_cart]}]
     end
-
+    
+    def order_again_helper
+        new_order_product = @past_order.product_orders.map {|product_order| product_order}
+        new_order_product.each do |product_order|
+            user.add_to_cart(product_order.product, product_order.quantity)
+        end 
+        main_menu
+    end
+    
     def past_cart
         names = @past_order.product_orders.map {|product_order| "#{product_order.product.name} with Quantity of #{product_order.quantity}"}
         puts "#{names}"
@@ -95,21 +107,16 @@ class Application
             menu.choice "Go back to main menu", -> {main_menu}
         end
     end
-
-    def order_again_helper
-        new_order_product = @past_order.product_orders.map {|product_order| product_order}
-        new_order_product.each do |product_order|
-            user.add_to_cart(product_order.product, product_order.quantity)
-        end 
-        main_menu
-    end
-
+    
+    #PRODUCT METHODS AND HELPER METHODS#
+    
     def view_all_products
         arr_of_products = User.all_product_instances #Array of Product INSTANCES
         choices = Hash[arr_of_products.map {|product| [product.name, product]}] #HASH: product = NAME OF PRODUCT, VALUE = PRODUCT INSTANCE           
         $selection = @@prompt.select("Which product would you like to view?".blue, choices, symbols: { marker: "‍🍽"}) #$ means global var. 
         choices = Hash[arr_of_products.map {|product| [product, item_options]}]
     end 
+    
     def view_all_category_products
         arr_of_cat_products = User.all_product_instances.select {|product| product.pairing == $category}.map {|product| product}
         choices = Hash[arr_of_cat_products.map {|product| [product.name, product]}]
@@ -123,6 +130,17 @@ class Application
         $category = @@prompt.select("Which pairing would you like to view?".blue, choices, symbols: { marker: "👯‍♂️"})
         view_all_category_products 
     end 
+
+    def item_menu
+        #system("clear")
+        @@prompt.select("Would you like to view all products or by pairing?".blue, symbols: { marker: "✅"}) do |menu|
+            menu.choice "View ALL Products", -> {view_all_products}
+            menu.choice "View by pairs", -> {view_by_pairings}
+            menu.choice "Go Back", -> {main_menu}
+        end
+    end 
+
+    #REVIEW METHODS AND HELPERS#
 
     def add_review
         user.add_review
@@ -163,6 +181,9 @@ class Application
         user.delete_review_by_id(@id_number)
         main_menu
     end
+
+
+    #MANAGING THE CART 
 
     def item_options
         puts $selection.description
@@ -220,6 +241,9 @@ class Application
         end
     end
     
+
+    #MAIN MENU
+
     def main_menu
         sleep 2
         puts @main_menu_display.red
@@ -233,15 +257,6 @@ class Application
             menu.choice "Log Out", -> {log_out}
         end
     end
-
-    def item_menu
-        #system("clear")
-        @@prompt.select("Would you like to view all products or by pairing?".blue, symbols: { marker: "✅"}) do |menu|
-            menu.choice "View ALL Products", -> {view_all_products}
-            menu.choice "View by pairs", -> {view_by_pairings}
-            menu.choice "Go Back", -> {main_menu}
-        end
-    end 
 
     def log_out
         puts "Thanks for checking out our app! Please like, comment, and subscribe 🥺"

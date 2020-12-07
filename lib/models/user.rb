@@ -9,6 +9,8 @@ class User < ActiveRecord::Base
     @@prompt = TTY::Prompt.new
     @@sym = @@prompt.decorate('🤫')
 
+    #CREATING PROGRESS BAR# 
+
     def self.progress_bar
         bar = ProgressBar.new 
         100.times do 
@@ -16,6 +18,8 @@ class User < ActiveRecord::Base
             bar.increment!
         end
     end
+
+    #LOGIN AND REGISTER METHODS# 
 
     def self.login_a_user
         puts "Please enter your username:".green
@@ -44,6 +48,21 @@ class User < ActiveRecord::Base
 
     end
 
+    #PRODUCT METHODS AND HELPER METHODS#
+
+    def self.all_product_names
+        all_names = Product.all.map {|product| product.name}
+        all_names
+    end
+
+    def self.all_product_instances
+        Product.all
+    end
+    
+    def self.categories #Array of Pairing instances
+        Pairing.all
+    end
+
     def past_orders
         past_order = self.orders.where(checked_out: true)
     end
@@ -53,7 +72,6 @@ class User < ActiveRecord::Base
     end
 
     def display_cart
-        
         self.current_cart.product_orders.each do |product_order|
             puts "Product Order ID: #{product_order.id}) #{product_order.product.name} Quantity: #{product_order.quantity}"
         end
@@ -63,15 +81,6 @@ class User < ActiveRecord::Base
         puts "Your total is: #{sprintf("$%2.2f",(@total_price.to_d/100))}"
     end
         
-    def self.all_product_names
-        all_names = Product.all.map {|product| product.name}
-        all_names
-    end
-
-    def self.all_product_instances
-        Product.all
-    end
-
     def update_quantity(product_order_id, new_quantity) #current_cart -> Order Instance
         product_order = self.current_cart.product_orders.find(product_order_id)
         product_order.update(quantity: new_quantity)
@@ -81,13 +90,29 @@ class User < ActiveRecord::Base
         self.current_cart.product_orders.find(product_order_id_num).destroy
     end
 
-    def delete_review_by_id(review_id)
-        self.reviews.find(review_id).destroy
-    end 
-
     def add_to_cart(product_instance, quantity)
         ProductOrder.create(order: self.current_cart, product: product_instance, quantity: quantity)
     end
+    
+    def check_out_cart
+        self.display_cart
+        self.current_cart.update(checked_out: true)
+        puts "Thanks for the ez money 🤑"
+    end
+
+    #REVIEW METHODS AND HELPER METHODS#
+    
+    def see_my_review_instances
+        self.reviews
+    end 
+    
+    def my_reviewed_products
+        all_reviews = see_my_review_instances.map {|review| review.product}
+    end
+
+    def delete_review_by_id(review_id)
+        self.reviews.find(review_id).destroy
+    end 
 
     def add_review
         puts "Please write a review description, press Enter when done. (in a single line)"
@@ -100,14 +125,6 @@ class User < ActiveRecord::Base
         end
         new_review = Review.create(rating: rating, description: review, product_id: $selection.id, user_id: self.id)
     end
-    
-    def see_my_review_instances
-        self.reviews
-    end 
-    
-    def my_reviewed_products
-        all_reviews = see_my_review_instances.map {|review| review.product}
-    end
 
     def reviews_for_product
         # $selection = product instance we chose
@@ -116,13 +133,4 @@ class User < ActiveRecord::Base
         end
     end
 
-    def self.categories #Array of Pairing instances
-        Pairing.all
-    end
-    
-    def check_out_cart
-        self.display_cart
-        self.current_cart.update(checked_out: true)
-        puts "Thanks for the ez money 🤑"
-    end
 end
