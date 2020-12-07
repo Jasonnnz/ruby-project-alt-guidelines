@@ -133,8 +133,13 @@ class User < ActiveRecord::Base
     def reviews_for_product
         # $selection = product instance we chose
         $selection.reviews.map do |review|
-            puts "#{review.description}, I give it a #{review.rating} out of 5! -#{review.user.name}" 
+            puts "#{review.description} I give it a #{review.rating} out of 5! -#{review.user.name}" 
         end
+    end
+
+    def average_review_for_selected_product
+        total_product_rating = $selection.reviews.sum {|review| review.rating}
+        average_rating = (total_product_rating.to_f / $selection.reviews.count).round(2)
     end
 
 end

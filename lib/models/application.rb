@@ -186,7 +186,7 @@ class Application
     #MANAGING THE CART 
 
     def item_options
-        puts $selection.description
+        puts "#{$selection.description} With an average rating of: #{user.average_review_for_selected_product}".yellow
         @@prompt.select("What would you like to do?".blue, symbols: { marker: "✅"}) do |menu|
             menu.choice "Add to cart", -> {add_to_cart_helper} 
             menu.choice "Add a review", -> {add_review}
@@ -245,7 +245,7 @@ class Application
     #MAIN MENU
 
     def main_menu
-        sleep 2
+        sleep 1
         puts @main_menu_display.red
         user.reload
         @@prompt.select("Welcome, #{user.username}! 🥳 What would you like to do?".blue, symbols: { marker: "🍁"}) do |menu|
