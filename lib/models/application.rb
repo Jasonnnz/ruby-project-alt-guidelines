@@ -59,6 +59,28 @@ class Application
             menu.choice "Login", -> {login}
         end
     end
+
+    def update_password
+        sym = @@prompt.decorate('🤫')
+        current_password = @@prompt.mask("Please enter your current password".red, mask: sym)
+        
+        if current_password == user.password
+            new_password = @@prompt.mask("Please enter your new password.".red, mask: sym)
+            
+            confirmation = @@prompt.mask("Please confirm your new password.".red, mask: sym)
+        
+            if new_password == confirmation
+                user.update(password: new_password)
+                main_menu
+            else 
+                puts "Sorry your passwords didn't match. Have you had your annual eye appointment yet this year?"
+                update_password
+            end
+        else 
+            puts "Sorry that was the wrong password. How did you forget it already?"
+            update_password
+        end 
+    end
     
     #CART METHODS AND HELPER METHODS# 
     
@@ -245,7 +267,6 @@ class Application
     #MAIN MENU
 
     def main_menu
-        sleep 1
         puts @main_menu_display.red
         user.reload
         @@prompt.select("Welcome, #{user.username}! 🥳 What would you like to do?".blue, symbols: { marker: "🍁"}) do |menu|
@@ -254,6 +275,7 @@ class Application
             menu.choice "Update Cart", -> {update_cart_helper}
             menu.choice "View Past Orders", -> {past_orders_helper}
             menu.choice "View My Reviews", -> {my_reviews}
+            menu.choice "Change password" , -> {update_password}
             menu.choice "Log Out", -> {log_out}
         end
     end

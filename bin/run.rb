@@ -19,5 +19,5 @@ end
 
 # Set's application's user to user_or_nil
 application.user = user_or_nil
-application.main_menu
-
+`afplay lib/music/Slushii.mp3`
+application.main_menu 
