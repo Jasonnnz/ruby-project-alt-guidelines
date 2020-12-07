@@ -67,6 +67,8 @@ class User < ActiveRecord::Base
         past_order = self.orders.where(checked_out: true)
     end
 
+    #MANAGING THE CART
+
     def current_cart
         orders.find_or_create_by(checked_out: false)
     end
@@ -90,6 +92,7 @@ class User < ActiveRecord::Base
         self.current_cart.product_orders.find(product_order_id_num).destroy
     end
 
+
     def add_to_cart(product_instance, quantity)
         ProductOrder.create(order: self.current_cart, product: product_instance, quantity: quantity)
     end
@@ -98,21 +101,10 @@ class User < ActiveRecord::Base
         self.display_cart
         self.current_cart.update(checked_out: true)
         puts "Thanks for the ez money 🤑"
-    end
 
-    #REVIEW METHODS AND HELPER METHODS#
-    
-    def see_my_review_instances
-        self.reviews
     end 
-    
-    def my_reviewed_products
-        all_reviews = see_my_review_instances.map {|review| review.product}
-    end
 
-    def delete_review_by_id(review_id)
-        self.reviews.find(review_id).destroy
-    end 
+    #REVIEW METHODS AND HELPERS
 
     def add_review
         puts "Please write a review description, press Enter when done. (in a single line)"
@@ -124,6 +116,18 @@ class User < ActiveRecord::Base
             rating = gets.chomp.to_i
         end
         new_review = Review.create(rating: rating, description: review, product_id: $selection.id, user_id: self.id)
+    end
+    
+    def delete_review_by_id(review_id)
+        self.reviews.find(review_id).destroy
+    end 
+
+    def see_my_review_instances
+        self.reviews
+    end 
+    
+    def my_reviewed_products
+        all_reviews = see_my_review_instances.map {|review| review.product}
     end
 
     def reviews_for_product
