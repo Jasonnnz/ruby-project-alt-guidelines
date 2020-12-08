@@ -171,7 +171,7 @@ class Application
 
     def reviews_for_product
         user.reviews_for_product
-        main_menu
+        item_menu
     end
 
     def my_reviews
@@ -225,10 +225,11 @@ class Application
             quantity = gets.chomp
         end
         user.add_to_cart($selection, quantity)
-        main_menu
+        item_menu
     end
 
     def delete_from_cart_helper
+        user.display_cart
         puts "Which Product Order would you like to delete? Please input the Product Order ID number."
         product_order_id = gets.chomp 
         user.delete_product_order_by_id(product_order_id)
@@ -236,6 +237,7 @@ class Application
     end
 
     def update_quantity_helper 
+        user.display_cart
         puts "Which Product Order would you like to update? Please input the ID number."
         product_order_id = gets.chomp
         puts "What is the new quantity of the product you would like?"

@@ -14,10 +14,12 @@ user_or_nil = application.login_or_register
 
 until user_or_nil
     # system("clear")
-    user_or_nil = application.login_or_register
+    user_or_nil = application.login_or_register 
 end
 
 # Set's application's user to user_or_nil
 application.user = user_or_nil
 `afplay lib/music/Slushii.mp3`
 application.main_menu 
+
+#jason big loser 
